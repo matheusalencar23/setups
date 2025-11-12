@@ -1,0 +1,137 @@
+#!/bin/bash
+
+# Java Version Manager (jvm)
+# Script para gerenciar versões do Java instaladas em /usr/local/lib/jdk
+
+JDK_DIR="/usr/local/lib/jdk"
+CURRENT_LINK="$JDK_DIR/current"
+
+# Cores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Função para listar versões disponíveis
+list_versions() {
+    echo -e "${BLUE}Versões disponíveis:${NC}"
+    echo ""
+
+    # Obter a versão atual
+    if [ -L "$CURRENT_LINK" ]; then
+        current=$(readlink "$CURRENT_LINK" | sed 's/\/$//')
+    else
+        current=""
+    fi
+
+    # Listar todas as versões (excluindo o link current)
+    for dir in "$JDK_DIR"/*; do
+        if [ -d "$dir" ] && [ "$(basename "$dir")" != "current" ]; then
+            version=$(basename "$dir")
+            if [ "$version" = "$current" ]; then
+                echo -e "  ${GREEN}* $version${NC} (atual)"
+            else
+                echo -e "    $version"
+            fi
+        fi
+    done
+}
+
+# Função para trocar de versão
+use_version() {
+    local version=$1
+
+    if [ -z "$version" ]; then
+        echo -e "${RED}Erro: Especifique a versão do Java${NC}"
+        echo "Uso: jvm use <versão>"
+        return 1
+    fi
+
+    local target_dir="$JDK_DIR/$version"
+
+    # Verificar se a versão existe
+    if [ ! -d "$target_dir" ]; then
+        echo -e "${RED}Erro: Versão '$version' não encontrada${NC}"
+        echo ""
+        list_versions
+        return 1
+    fi
+
+    # Remover link simbólico antigo
+    if [ -L "$CURRENT_LINK" ]; then
+        sudo rm "$CURRENT_LINK"
+    elif [ -e "$CURRENT_LINK" ]; then
+        echo -e "${RED}Erro: '$CURRENT_LINK' existe mas não é um link simbólico${NC}"
+        return 1
+    fi
+
+    # Criar novo link simbólico
+    sudo ln -s "$version" "$CURRENT_LINK"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Java alterado para versão: $version${NC}"
+
+        # Mostrar a versão do Java
+        if [ -f "$CURRENT_LINK/bin/java" ]; then
+            echo ""
+            "$CURRENT_LINK/bin/java" -version 2>&1 | head -n 1
+        fi
+    else
+        echo -e "${RED}Erro ao criar link simbólico${NC}"
+        return 1
+    fi
+}
+
+# Função para mostrar a versão atual
+current_version() {
+    if [ -L "$CURRENT_LINK" ]; then
+        current=$(readlink "$CURRENT_LINK" | sed 's/\/$//')
+        echo -e "${GREEN}Versão atual: $current${NC}"
+
+        if [ -f "$CURRENT_LINK/bin/java" ]; then
+            echo ""
+            "$CURRENT_LINK/bin/java" -version 2>&1 | head -n 3
+        fi
+    else
+        echo -e "${YELLOW}Nenhuma versão definida${NC}"
+    fi
+}
+
+# Função para mostrar ajuda
+show_help() {
+    echo "Java Version Manager (jvm)"
+    echo ""
+    echo "Uso:"
+    echo "  jvm list              Lista todas as versões disponíveis"
+    echo "  jvm use <versão>      Troca para a versão especificada"
+    echo "  jvm current           Mostra a versão atual"
+    echo "  jvm help              Mostra esta ajuda"
+    echo ""
+    echo "Exemplos:"
+    echo "  jvm list"
+    echo "  jvm use jdk-21.0.6"
+    echo "  jvm use jdk1.8.0_202"
+}
+
+# Menu principal
+case "$1" in
+    list|ls)
+        list_versions
+        ;;
+    use)
+        use_version "$2"
+        ;;
+    current)
+        current_version
+        ;;
+    help|--help|-h|"")
+        show_help
+        ;;
+    *)
+        echo -e "${RED}Comando desconhecido: $1${NC}"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac
