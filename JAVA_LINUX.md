@@ -21,3 +21,19 @@
   8. Para instalar outras versões repitas os passos 2, 3, 4 e 5.
 
   9. Para alternar entre as versões é necessário remover o link `current` usando o comando `unlink current` e criar um novo link da versão desejada como no passo 6.
+
+## Automatização da alternância de versões instaladas
+
+  1. Criar um arquivo/script com o nome `jvm`
+  
+  2. Adicionar o conteúdo de LINK no arquivo
+
+  3. Para instalá-lo globalmente, coloque o arquivo `jvm` em `/usr/local/bin/`
+  
+  4. Depois você pode usar os seguintes comandos:
+     - `jvm list` - Lista todas as versões disponíveis (destaca a atual com *)
+     - `jvm use <versão>` - Troca para a versão especificada
+     - `jvm current` - Mostra a versão atual em uso
+     - `jvm help` - Mostra ajuda
+    
+  Nota: O script usa sudo internamente para criar o link simbólico, então, dependendo do local onde esse link esteja sendo criado, você precisará inserir sua senha quando trocar de versão. Se preferir usar sem instalar globalmente, você pode executar diretamente: `path_to_script/jvm`
