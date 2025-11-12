@@ -22,18 +22,17 @@
 
   9. Para alternar entre as versões é necessário remover o link `current` usando o comando `unlink current` e criar um novo link da versão desejada como no passo 6.
 
-## Automatização da alternância de versões instaladas
+## Automatização para controle de versões instaladas
 
-  1. Criar um arquivo/script com o nome `jvm`
-  
-  2. Adicionar o conteúdo de LINK no arquivo
+  1. Criar um arquivo/script com o nome `jvm` e adicionar o conteúdo do [script](https://github.com/matheusalencar23/setups/blob/master/jvm) ou baixar o arquivo na máquina
+     - Nota: No script existe a variável `JDK_DIR`, ela deve apontar para o local onde os arquivos `jdk` estão localizado. Se a primeira seção desse passo a passo tiver sido seguida ela já deve estar apontando para o local correto
 
-  3. Para instalá-lo globalmente, coloque o arquivo `jvm` em `/usr/local/bin/`
+  2. Para instalá-lo globalmente, coloque o arquivo `jvm` em `/usr/local/bin/`
   
-  4. Depois você pode usar os seguintes comandos:
+  3. Depois você pode usar os seguintes comandos:
      - `jvm list` - Lista todas as versões disponíveis (destaca a atual com *)
      - `jvm use <versão>` - Troca para a versão especificada
      - `jvm current` - Mostra a versão atual em uso
      - `jvm help` - Mostra ajuda
     
-  Nota: O script usa sudo internamente para criar o link simbólico, então, dependendo do local onde esse link esteja sendo criado, você precisará inserir sua senha quando trocar de versão. Se preferir usar sem instalar globalmente, você pode executar diretamente: `path_to_script/jvm`
+  Nota: O script usa `sudo` internamente para criar o link simbólico, então, dependendo do local onde os arquivos `jdk` estão, você precisará inserir sua senha quando trocar de versão. Se preferir usar sem instalar globalmente, você pode executar diretamente: `path_to_script/jvm`
