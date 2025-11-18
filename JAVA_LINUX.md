@@ -28,8 +28,10 @@
      - Nota: No script existe a variável `JDK_DIR`, ela deve apontar para o local onde os arquivos `jdk` estão localizado. Se a primeira seção desse passo a passo tiver sido seguida ela já deve estar apontando para o local correto
 
   2. Para instalá-lo globalmente, coloque o arquivo `jvm` em `/usr/local/bin/`
+     
+  3. Pode ser necessário dar permissão para que o arquivo seja executado, para isso execute o comando `sudo chmod +x /usr/local/bin/jvm`
   
-  3. Depois você pode usar os seguintes comandos:
+  4. Depois você pode usar os seguintes comandos:
      - `jvm list` - Lista todas as versões disponíveis (destaca a atual com *)
      - `jvm use <versão>` - Troca para a versão especificada
      - `jvm current` - Mostra a versão atual em uso
